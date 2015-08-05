@@ -1,0 +1,147 @@
+<!doctype html>
+
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+        
+        <style type="text/css">
+            #main {
+                max-width: 800px;
+                margin: 32px auto;
+            }
+        </style>
+
+        <script type="text/javascript">
+            function spiderTree(height)
+            {
+                var result = [];
+                for (var i = 0; i < height; i++)
+                {
+                    result.push({id: "Spider"});
+                }
+                return result;
+            }
+
+            function sheepCane(height)
+            {
+                var result = [];
+                for (var i = 0; i < height; i++)
+                {
+                    result.push({id: "Sheep", Color: (i % 2) ? 0 : 14});
+                }
+                return result;
+            }
+
+            function generateList(type, height)
+            {
+                switch (type)
+                {
+                    case "1":
+                        return spiderTree(height);
+                    case "2":
+                        return sheepCane(height);
+                }
+            }
+
+            function generateCode(list)
+            {
+                var root = list[0];
+                var current = root;
+
+                for (var i = 1; i < list.length; i++)
+                {
+                    current["Riding"] = list[i];
+                    current = list[i];
+                }
+
+                var id = root["id"];
+                delete root["id"];
+
+                return "/summon " + id + " ~ ~1 ~ " + toMcJson(root);
+            }
+
+            function toMcJson(item)
+            {
+                if (typeof item == "object")
+                {
+                    var result = "{";
+                    for (var key in item)
+                    {
+                        result += key + ":" + toMcJson(item[key]) + ",";
+                    }
+                    return result.slice(0,-1) + "}";
+                }
+                if (typeof item == "array")
+                {
+                    var result = "[";
+                    for (var i = 0; i < item.length; i++)
+                    {
+                        result += toMcJson(item[i]) + ",";
+                    }
+                    return result.slice(0,-1) + "]";
+                }
+                if (typeof item == "string")
+                {
+                    return '"' + item + '"';
+                }
+
+                return "" + item;
+            }
+
+            function generate()
+            {
+                var form = document.forms["tree"];
+
+                var list = generateList(form.type.value, form.height.value);
+                
+                if (form.add_minecart.checked) list.push({id:"Minecart"});
+
+                var code = generateCode(list);
+           
+                document.getElementById("result").value = code;
+                document.getElementById("chatWarning").style.display = (code.length > 100) ? "block" : "none";
+
+                return false;
+            }
+        </script>
+    </head>
+    <body>
+        <div id="main">
+            <h1>Mob Tree Summoner</h1>
+        <form role="form" onsubmit="return generate()" id="tree">
+            <div class="form-group">
+                <label>Mob Tree height:</label>
+                <input class="form-control" type="number" name="height" value="20" min="1" max="256">
+            </div>
+
+            <div class="form-group">
+                <label>Type:</label>
+                <select class="form-control" name="type">
+                    <option value="1" selected>Spider Tree</option>
+                    <option value="2">Sheep Candy Cane</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Additional options</label>
+
+                <div class="checkbox">
+                    <label><input type="checkbox" name="add_minecart" value="1">Add Minecart (the tree can't run away then)</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-default">Generate</button>
+        </form>
+        <hr>
+        <h3>Result:</h3>
+        
+        <div class="form-group">
+        <input type="text" class="form-control" id="result">
+        </div>
+        
+        <div id="chatWarning" class="alert alert-warning" style="display:none">
+            This code is too long for chat! Use a command block instead.
+        </div>
+    </body>
+</html>
