@@ -2,6 +2,8 @@
 
 <html>
     <head>
+        <title>Minecraft Mobtree Summoner</title>
+        
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
         
@@ -10,38 +12,26 @@
                 max-width: 800px;
                 margin: 32px auto;
             }
+
+            textarea { font-family: monospace; }
         </style>
 
         <script type="text/javascript">
-            function spiderTree(height)
+            function updateCode()
             {
-                var result = [];
-                for (var i = 0; i < height; i++)
-                {
-                    result.push({id: "Spider"});
-                }
-                return result;
-            }
+                var form = document.forms["tree"];
+                var source = form.sourcecode;
 
-            function sheepCane(height)
-            {
-                var result = [];
-                for (var i = 0; i < height; i++)
-                {
-                    result.push({id: "Sheep", Color: (i % 2) ? 0 : 14});
-                }
-                return result;
-            }
-
-            function generateList(type, height)
-            {
-                switch (type)
+                switch (form.type.value)
                 {
                     case "1":
-                        return spiderTree(height);
+                        source.value = "" + form.height.value + "x Spider";
+                        break;
                     case "2":
-                        return sheepCane(height);
+                        source.value = "" + Math.round(form.height.value / 2) + "x\n" + " Sheep {Color:0}\n Sheep {Color:14}";
+                        break;
                 }
+                if (form.add_minecart.checked) source.value += "\nMinecart";
             }
 
             function generateCode(list)
@@ -91,20 +81,32 @@
 
             function generate()
             {
-                var form = document.forms["tree"];
+                try {
+                    var form = document.forms["tree"];
+                    var errorblock = document.getElementById("error");
 
-                var list = generateList(form.type.value, form.height.value);
-                
-                if (form.add_minecart.checked) list.push({id:"Minecart"});
-
-                var code = generateCode(list);
-           
-                document.getElementById("result").value = code;
-                document.getElementById("chatWarning").style.display = (code.length > 100) ? "block" : "none";
-
-                return false;
+                    var list;
+                    try {
+                        list = parser.parse(form["sourcecode"].value);
+                        errorblock.style.display = "none";
+                        console.debug(list);
+                    } catch (e) {
+                        console.debug(e);
+                        errorblock.innerText = e.message;
+                        errorblock.style.display = "block";
+                    }
+                    
+                    var code = generateCode(list);
+               
+                    document.getElementById("result").value = code;
+                    document.getElementById("chatWarning").style.display = (code.length > 100) ? "block" : "none";
+                } finally {
+                    return false;
+                }
             }
         </script>
+        <script type="text/javascript" src="grammar.js"></script>
+    
     </head>
     <body>
         <div id="main">
@@ -112,12 +114,12 @@
         <form role="form" onsubmit="return generate()" id="tree">
             <div class="form-group">
                 <label>Mob Tree height:</label>
-                <input class="form-control" type="number" name="height" value="20" min="1" max="256">
+                <input class="form-control" onchange="updateCode()" type="number" name="height" value="20" min="1" max="256">
             </div>
 
             <div class="form-group">
                 <label>Type:</label>
-                <select class="form-control" name="type">
+                <select onchange="updateCode()" class="form-control" name="type">
                     <option value="1" selected>Spider Tree</option>
                     <option value="2">Sheep Candy Cane</option>
                 </select>
@@ -126,9 +128,20 @@
             <div class="form-group">
                 <label>Additional options</label>
 
-                <div class="checkbox">
+                <div onchange="updateCode()" class="checkbox">
                     <label><input type="checkbox" name="add_minecart" value="1">Add Minecart (the tree can't run away then)</label>
                 </div>
+            </div>
+
+            <hr>
+
+            <div class="form-group">
+                <label>Expert Mode</label>
+                <textarea class="form-control" rows=10 name="sourcecode"></textarea>
+            </div>
+
+            <div id="error" class="alert alert-danger" style="display:none">
+                
             </div>
 
             <button type="submit" class="btn btn-default">Generate</button>
@@ -143,5 +156,9 @@
         <div id="chatWarning" class="alert alert-warning" style="display:none">
             This code is too long for chat! Use a command block instead.
         </div>
+        
+        <script type="text/javascript">
+            updateCode();
+        </script>
     </body>
 </html>
