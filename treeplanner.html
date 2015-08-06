@@ -53,6 +53,15 @@
 
             function toMcJson(item)
             {
+                if (item instanceof Array)
+                {
+                    var result = "[";
+                    for (var i = 0; i < item.length; i++)
+                    {
+                        result += toMcJson(item[i]) + ",";
+                    }
+                    return result.slice(0,-1) + "]";
+                }
                 if (typeof item == "object")
                 {
                     var result = "{";
@@ -61,15 +70,6 @@
                         result += key + ":" + toMcJson(item[key]) + ",";
                     }
                     return result.slice(0,-1) + "}";
-                }
-                if (typeof item == "array")
-                {
-                    var result = "[";
-                    for (var i = 0; i < item.length; i++)
-                    {
-                        result += toMcJson(item[i]) + ",";
-                    }
-                    return result.slice(0,-1) + "]";
                 }
                 if (typeof item == "string")
                 {
