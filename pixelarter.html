@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Minecraft PixelArt Summoner</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+        
+        <style type="text/css">
+            #main {
+                max-width: 800px;
+                margin: 32px auto;
+            }
+
+            textarea { font-family: monospace; }
+        </style>
+        
+    </head>
+    <body>
+        <div id="main">
+            <h1>Minecraft PixelArt Summoner</h1>
+            <form id="input" onsubmit="return false">
+                <div class="form-group">
+                    <label>Input Image URL:</label>
+                    <input class="form-control" type="file" name="image">
+                </div>
+            </form>   
+            <img id="preview" src="" alt="">
+            
+            <hr>
+            <input class="form-control" type="text" id="result">
+        </div>
+    </body>
+    <script type="text/javascript">
+        var preview = document.getElementById("preview");
+                
+        document.forms["input"].image.onchange = function()
+        {
+            var file = this.files[0];
+            
+            var reader = new FileReader();
+            reader.onload = function(e)
+            {
+                preview.src = this.result;
+                
+                var canvas = document.createElement("canvas");
+                canvas.width = preview.width;
+                canvas.height = preview.height;
+                var context = canvas.getContext('2d');
+                context.drawImage(preview, 0, 0, preview.width, preview.height);  
+                
+                generate(context, preview.width, preview.height);
+            };
+            reader.readAsDataURL(file);
+            
+        };
+        
+        function generate(context, width, height)
+        {
+            var list = generateStacks(context, width, height);
+            var result = generateCommand(list, 0);
+            
+            document.getElementById("result").value = result;
+        }
+        
+        function generateCommand(list, x)
+        {
+            if (x == list.length - 1)
+            {
+                return generateCode(list[x]);
+            } else {
+                var stack = list[x];
+                console.debug(stack);
+                stack.unshift({id: 'FallingSand', Time: 10, TileID: 137, Command: generateCommand(list, x + 1)});
+                stack.unshift({id: 'FallingSand', Time: 10, TileID: 72});
+                stack.unshift({id: 'Item'});
+                return generateCode(stack);
+            }
+        }
+        
+        function generateStacks(context, width, height)
+        {
+            var result = [];
+            for (var x = 0; x < width; x++)
+                result.push(generateStack(context.getImageData(x,0,1,height)));
+            return result;
+        }
+        
+        function generateStack(rawData)
+        {
+            var result = [];
+            for (var y = 0; y < rawData.height; y++)
+                result.push(findBlock(rawData.data.subarray(y*4,y*4 + 3)));
+            return result;
+        }
+        
+        var wools = [
+            [215,213,210],
+            [176,105,52],
+            [157,88,130],
+            [99,117,157],
+            [197,174,76],
+            [138,149,77],
+            [237,155,156],
+            [92,93,93],
+            [168,169,169],
+            [85,119,114],
+            [106,47,111],
+            [42,59,114],
+            [114,73,38],
+            [75,82,39],
+            [175,51,37],
+            [43,44,45]
+        ];
+        
+        function findBlock(rgb)
+        {
+            var difference = 9001;
+            var color;
+            
+            for (var i = 0; i < wools.length; i++)
+            {
+                var diff = percievedDiff(rgb, wools[i]);
+                if (diff < difference)
+                {
+                    difference = diff;
+                    color = i;
+                }
+            }
+            
+            return {id: 'FallingSand', TileID: 35, Data: color, Time: 20}; 
+        }
+        
+        function percievedDiff(colorA, colorB)
+        {
+            return 0.299 * Math.abs(colorA[0] - colorB[0])
+                 + 0.587 * Math.abs(colorA[1] - colorB[1])
+                 + 0.114 * Math.abs(colorA[2] - colorB[2]);
+        }
+        
+        function generateCode(list)
+        {
+            var root = list[0];
+            var current = root;
+
+            for (var i = 1; i < list.length; i++)
+            {
+                current["Riding"] = list[i];
+                current = list[i];
+            }
+
+            var id = root["id"];
+            delete root["id"];
+
+            return "/summon " + id + " ~1 ~1 ~ " + toMcJson(root);
+        }
+
+        function toMcJson(item)
+        {
+            if (item instanceof Array)
+            {
+                var result = "[";
+                for (var i = 0; i < item.length; i++)
+                {
+                    result += toMcJson(item[i]) + ",";
+                }
+                return result.slice(0,-1) + "]";
+            }
+            if (typeof item == "object")
+            {
+                var result = "{";
+                for (var key in item)
+                {
+                    result += key + ":" + toMcJson(item[key]) + ",";
+                }
+                return result.slice(0,-1) + "}";
+            }
+            if (typeof item == "string")
+            {
+                return '"' + item + '"';
+            }
+
+            return "" + item;
+        }
+    </script>
+</html>
