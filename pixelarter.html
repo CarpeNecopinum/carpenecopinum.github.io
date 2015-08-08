@@ -26,19 +26,33 @@
                     <label>Input Image URL:</label>
                     <input class="form-control" type="file" name="image">
                 </div>
+                <div class="form-group">
+                    <label>x-Axis Slicing (0 = disable slicing):</label>
+                    <input type="number" class="form-control" name="slicing" value="0" min="0" max="64">
+                </div>
             </form>   
             <img id="preview" src="" alt="">
             
             <hr>
-            <input class="form-control" type="text" id="result">
+            
+            <div id="toolong" class="alert alert-danger" style="display:none">
+                Warning: Some of the outputs are too long, use slicing with a smaller slice width or your client will crash!
+            </div>
+            
+            <div id="results">
+                
+            </div>
         </div>
     </body>
     <script type="text/javascript">
         var preview = document.getElementById("preview");
+        var sliceField = document.forms["input"].slicing;
+        var resultDiv = document.getElementById("results");
+        var tooLongdiv = document.getElementById("toolong");
                 
-        document.forms["input"].image.onchange = function()
+        function update()
         {
-            var file = this.files[0];
+            var file = document.forms["input"].image.files[0];
             
             var reader = new FileReader();
             reader.onload = function(e)
@@ -58,26 +72,65 @@
         };
         
         function generate(context, width, height)
-        {
-            var list = generateStacks(context, width, height);
-            var result = generateCommand(list, 0);
+        { 
+            tooLongdiv.style.display = "none";
             
-            document.getElementById("result").value = result;
+            var list = generateStacks(context, width, height);
+            console.debug(list);
+            
+            var slices = [];
+            var sliceWidth = parseInt(sliceField.value);
+            if (sliceWidth != 0)
+            {
+                for (var x = 0; x < list.length; x += sliceWidth)
+                {
+                    slices.push(list.slice(x, x + sliceWidth));
+                }
+            } else {
+                slices.push(list);
+            }
+            
+            resultDiv.innerHTML = "";
+            
+            console.debug(slices);
+            for (var i = 0; i < slices.length; i++)
+            {
+                var result;
+                
+                var slice = slices[i];
+                if (slice.length == 1)
+                {
+                    result = generateCode(slice, i+1);
+                } 
+                else
+                {
+                    var builders = [];
+                    //Add a deleter for the builders
+                    builders.push({id: 'FallingSand', Time: 99, TileID: 152});
+                    builders.push({id: 'FallingSand', Time: 99, TileID: 137, TileEntityData: {Command: "/fill ~ ~1 ~ ~ ~-" + 2 * slice.length + " ~ air"}});
+            
+                    for (var x = 0; x < slice.length; x++)
+                        builders = builders.concat(generateBuilder(slice[x], i * sliceWidth + x + 1));                    
+                    
+                    result = generateCode(builders, 1);
+                }
+
+                var output = document.createElement("textarea");
+                output.className = "form-control";
+                output.value = result;
+                
+                if (result.length > 32767) tooLongdiv.style.display = "block";
+                
+                resultDiv.appendChild(output);
+            }
         }
         
-        function generateCommand(list, x)
+        function generateBuilder(column, offset)
         {
-            if (x == list.length - 1)
-            {
-                return generateCode(list[x]);
-            } else {
-                var stack = list[x];
-                console.debug(stack);
-                stack.unshift({id: 'FallingSand', Time: 10, TileID: 137, Command: generateCommand(list, x + 1)});
-                stack.unshift({id: 'FallingSand', Time: 10, TileID: 72});
-                stack.unshift({id: 'Item'});
-                return generateCode(stack);
-            }
+            var result = [];
+            result.push({id: 'FallingSand', Time: 99, TileID: 152});
+            result.push({id: 'FallingSand', Time: 99, TileID: 137, TileEntityData: {Command: generateCode(column, offset)}});
+            return result;
         }
         
         function generateStacks(context, width, height)
@@ -117,10 +170,10 @@
         
         function findBlock(rgb)
         {
-            var difference = 9001;
-            var color;
+            var difference = percievedDiff(rgb, wools[0]);
+            var color = 0;
             
-            for (var i = 0; i < wools.length; i++)
+            for (var i = 1; i < wools.length; i++)
             {
                 var diff = percievedDiff(rgb, wools[i]);
                 if (diff < difference)
@@ -130,17 +183,20 @@
                 }
             }
             
-            return {id: 'FallingSand', TileID: 35, Data: color, Time: 20}; 
+            return {id: 'FallingSand', TileID: 35, Data: color, Time: 99}; 
         }
         
         function percievedDiff(colorA, colorB)
         {
-            return 0.299 * Math.abs(colorA[0] - colorB[0])
-                 + 0.587 * Math.abs(colorA[1] - colorB[1])
-                 + 0.114 * Math.abs(colorA[2] - colorB[2]);
+            hsA = rgb2hsv(colorA);
+            hsB = rgb2hsv(colorB);
+            
+            return Math.abs(hsA.h - hsB.h) * hsA.s 
+                 + Math.abs(hsA.s - hsB.s)
+                 + Math.abs(hsA.v - hsB.v);
         }
         
-        function generateCode(list)
+        function generateCode(list, shift)
         {
             var root = list[0];
             var current = root;
@@ -154,7 +210,7 @@
             var id = root["id"];
             delete root["id"];
 
-            return "/summon " + id + " ~1 ~1 ~ " + toMcJson(root);
+            return "/summon " + id + " ~" + shift + " ~1" + " ~ " + toMcJson(root);
         }
 
         function toMcJson(item)
@@ -173,16 +229,59 @@
                 var result = "{";
                 for (var key in item)
                 {
-                    result += key + ":" + toMcJson(item[key]) + ",";
+                    result += key + ":" + (key == "Riding" ? "\n" : "") + toMcJson(item[key]) + ",";
                 }
                 return result.slice(0,-1) + "}";
             }
             if (typeof item == "string")
             {
-                return '"' + item + '"';
+                return '"' + item.replace(/\\/g, "\\\\").replace(/\"/g, "\\\"") + '"';
             }
 
             return "" + item;
         }
+        
+        function rgb2hsv (rgb) {
+            var rr, gg, bb,
+                r = rgb[0] / 255,
+                g = rgb[1] / 255,
+                b = rgb[2] / 255,
+                h, s,
+                v = Math.max(r, g, b),
+                diff = v - Math.min(r, g, b),
+                diffc = function(c){
+                    return (v - c) / 6 / diff + 1 / 2;
+                };
+
+            if (diff == 0) {
+                h = s = 0;
+            } else {
+                s = diff / v;
+                rr = diffc(r);
+                gg = diffc(g);
+                bb = diffc(b);
+
+                if (r === v) {
+                    h = bb - gg;
+                }else if (g === v) {
+                    h = (1 / 3) + rr - bb;
+                }else if (b === v) {
+                    h = (2 / 3) + gg - rr;
+                }
+                if (h < 0) {
+                    h += 1;
+                }else if (h > 1) {
+                    h -= 1;
+                }
+            }
+            return {
+                h: Math.round(h * 360),
+                s: Math.round(s * 100),
+                v: Math.round(v * 100)
+            };
+        }
+        
+        document.forms["input"].image.onchange = update; 
+        document.forms["input"].slicing.onchange = update;
     </script>
 </html>
