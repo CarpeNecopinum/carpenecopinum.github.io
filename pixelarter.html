@@ -5,64 +5,80 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
+        <link rel="stylesheet" href="base.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
         
-        <style type="text/css">
-            #main {
-                max-width: 800px;
-                margin: 32px auto;
-            }
-
-            textarea { font-family: monospace; }
-        </style>
-        
     </head>
     <body>
-        <div id="main">
-            <h1>Minecraft PixelArt Summoner</h1>
-            <form id="input" onsubmit="return false">
-                <div class="form-group">
-                    <label>Input Image URL:</label>
-                    <input class="form-control" type="file" name="image">
-                </div>
-                <div class="form-group">
-                    <label>x-Axis Slicing (0 = disable slicing):</label>
-                    <input type="number" class="form-control" name="slicing" value="0" min="0" max="64">
-                </div>
-            </form>   
-            <img id="preview" src="" alt="">
-            
-            <hr>
-            
-            <div id="toolong" class="alert alert-danger" style="display:none">
-                Warning: Some of the outputs are too long, use slicing with a smaller slice width or your client will crash!
+        <div class="container">
+            <div class="col-md-2" id="sidebar">
+                <h5>Also:</h5>
+                <a href="treeplanner.html">Mob Tree Spawner</a>
+                <a href="pixelarter.html">Pixel Art Summoner</a>                
             </div>
             
-            <div id="results">
+            <div class="col-md-8">
+                <h1>Minecraft PixelArt Summoner</h1>
+                <form id="input" onsubmit="return false">
+                    <div class="form-group">
+                        <label>Input Image URL:</label>
+                        <input class="form-control" type="file" name="image">
+                    </div>
+                    <div class="form-group">
+                        <label>x-Axis Slicing (0 = disable slicing):</label>
+                        <input type="number" class="form-control" name="slicing" value="0" min="0" max="64">
+                    </div>
+                    <div class="form-group">
+                        <label>Block Selection Strategy:</label>
+                        <select name="strategy">
+                            <option value="hsv">Hue-Saturation-Value (HSV)</option>
+                            <option value="yuv" selected="selected">Luma Weighted</option>
+                        </select>
+                    </div>
+                </form>   
                 
+                <div class="col-md-6">
+                    <img id="preview" src="" alt="">                    
+                </div>
+                <div class="col-md-6">
+                    <canvas id="result"></canvas>                    
+                </div>
+                <div class="clearfix"></div>
+
+                <div id="toolong" class="alert alert-danger" style="display:none">
+                    Warning: Some of the outputs are too long, use slicing with a smaller slice width or your client will crash!
+                </div>
+
+                <div id="results">
+
+                </div>
             </div>
         </div>
     </body>
     <script type="text/javascript">
-        var preview = document.getElementById("preview");
+        $ = document.getElementById.bind(document);
+        
+        var preview = $("preview");
         var sliceField = document.forms["input"].slicing;
-        var resultDiv = document.getElementById("results");
-        var tooLongdiv = document.getElementById("toolong");
+        var resultDiv = $("results");
+        var tooLongdiv = $("toolong");
+        var canvas = $("result");
+        var context = canvas.getContext('2d');
+        var strategy = "hsv";
                 
         function update()
         {
             var file = document.forms["input"].image.files[0];
+            strategy = document.forms["input"].strategy.value;
             
             var reader = new FileReader();
             reader.onload = function(e)
             {
                 preview.src = this.result;
                 
-                var canvas = document.createElement("canvas");
                 canvas.width = preview.width;
                 canvas.height = preview.height;
-                var context = canvas.getContext('2d');
                 context.drawImage(preview, 0, 0, preview.width, preview.height);  
                 
                 generate(context, preview.width, preview.height);
@@ -137,15 +153,24 @@
         {
             var result = [];
             for (var x = 0; x < width; x++)
-                result.push(generateStack(context.getImageData(x,0,1,height)));
-            return result;
-        }
-        
-        function generateStack(rawData)
-        {
-            var result = [];
-            for (var y = 0; y < rawData.height; y++)
-                result.push(findBlock(rawData.data.subarray(y*4,y*4 + 3)));
+            {
+                result[x] = [];
+                for (var y = 0; y < height; y++)
+                {
+                    var block = findBlock(context.getImageData(x,y,1,1).data);
+                    
+                    var rgb = block[0];
+                    
+                    context.fillStyle = "rgb("+rgb[0]+","+rgb[1]+","+rgb[2]+")";
+                    context.fillRect( x, y, 1, 1 );
+                    
+                    var Ids = block[1];                    
+                    var blockEntity = {id: 'FallingSand', TileID: Ids[0], Time: 99};
+                    if (Ids[1]) blockEntity["Data"] = Ids[1];  
+                    
+                    result[x].push(blockEntity);
+                }
+            }
             return result;
         }
         
@@ -197,7 +222,7 @@
         function findBlock(rgb)
         {
             var difference = percievedDiff(rgb, blockPalette[0][0]);
-            var chosen = blockPalette[0][1];
+            var chosen = blockPalette[0];
             
             for (var i = 1; i < blockPalette.length; i++)
             {
@@ -205,23 +230,27 @@
                 if (diff < difference)
                 {
                     difference = diff;
-                    chosen = blockPalette[i][1];
+                    chosen = blockPalette[i];
                 }
             }
             
-            result = {id: 'FallingSand', TileID: chosen[0], Time: 99};
-            if (chosen[1]) result["Data"] = chosen[1];
-            return result;
+            return chosen;
         }
         
         function percievedDiff(colorA, colorB)
         {
-            hsA = rgb2hsv(colorA);
-            hsB = rgb2hsv(colorB);
-            
-            return Math.abs(hsA.h - hsB.h) * hsA.s 
-                 + Math.abs(hsA.s - hsB.s)
-                 + Math.abs(hsA.v - hsB.v);
+            switch(strategy)
+            {
+                case "hsv":
+                    hsA = rgb2hsv(colorA);
+                    hsB = rgb2hsv(colorB);
+
+                    return Math.abs(hsA.h - hsB.h) * hsA.s + Math.abs(hsA.s - hsB.s) + Math.abs(hsA.v - hsB.v);
+                
+                case "yuv":
+                    return 0.299 * Math.abs(colorA[0] - colorB[0]) + 0.587 * Math.abs(colorA[1] - colorB[1]) + 0.144 * Math.abs(colorA[2] - colorB[2]);
+                    
+            }
         }
         
         function generateCode(list, shift)

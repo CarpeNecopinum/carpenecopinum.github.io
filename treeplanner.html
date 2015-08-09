@@ -4,17 +4,10 @@
     <head>
         <title>Minecraft Mobtree Summoner</title>
         
+        <link rel="stylesheet" href="base.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
         
-        <style type="text/css">
-            #main {
-                max-width: 800px;
-                margin: 32px auto;
-            }
-
-            textarea { font-family: monospace; }
-        </style>
 
         <script type="text/javascript">
             function updateCode()
@@ -109,54 +102,62 @@
     
     </head>
     <body>
-        <div id="main">
-            <h1>Mob Tree Summoner</h1>
-        <form role="form" onsubmit="return generate()" id="tree">
-            <div class="form-group">
-                <label>Mob Tree height:</label>
-                <input class="form-control" onchange="updateCode()" type="number" name="height" value="20" min="1" max="256">
+        <div class="container">
+            <div class="col-md-2" id="sidebar">
+                <h5>Also:</h5>
+                <a href="treeplanner.html">Mob Tree Spawner</a>
+                <a href="pixelarter.html">Pixel Art Summoner</a>                
             </div>
+            
+            <div class="col-md-8">
+                <h1>Mob Tree Summoner</h1>
+                <form role="form" onsubmit="return generate()" id="tree">
+                    <div class="form-group">
+                        <label>Mob Tree height:</label>
+                        <input class="form-control" onchange="updateCode()" type="number" name="height" value="20" min="1" max="256">
+                    </div>
 
-            <div class="form-group">
-                <label>Type:</label>
-                <select onchange="updateCode()" class="form-control" name="type">
-                    <option value="1" selected>Spider Tree</option>
-                    <option value="2">Sheep Candy Cane</option>
-                </select>
-            </div>
+                    <div class="form-group">
+                        <label>Type:</label>
+                        <select onchange="updateCode()" class="form-control" name="type">
+                            <option value="1" selected>Spider Tree</option>
+                            <option value="2">Sheep Candy Cane</option>
+                        </select>
+                    </div>
 
-            <div class="form-group">
-                <label>Additional options</label>
+                    <div class="form-group">
+                        <label>Additional options</label>
 
-                <div onchange="updateCode()" class="checkbox">
-                    <label><input type="checkbox" name="add_minecart" value="1">Add Minecart (the tree can't run away then)</label>
+                        <div onchange="updateCode()" class="checkbox">
+                            <label><input type="checkbox" name="add_minecart" value="1">Add Minecart (the tree can't run away then)</label>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <div class="form-group">
+                        <label>Expert Mode</label>
+                        <textarea class="form-control" rows=10 name="sourcecode"></textarea>
+                    </div>
+
+                    <div id="error" class="alert alert-danger" style="display:none">
+
+                    </div>
+
+                    <button type="submit" class="btn btn-default">Generate</button>
+                </form>
+                <hr>
+                <h3>Result:</h3>
+
+                <div class="form-group">
+                <input type="text" class="form-control" id="result">
+                </div>
+
+                <div id="chatWarning" class="alert alert-warning" style="display:none">
+                    This code is too long for chat! Use a command block instead.
                 </div>
             </div>
-
-            <hr>
-
-            <div class="form-group">
-                <label>Expert Mode</label>
-                <textarea class="form-control" rows=10 name="sourcecode"></textarea>
-            </div>
-
-            <div id="error" class="alert alert-danger" style="display:none">
-                
-            </div>
-
-            <button type="submit" class="btn btn-default">Generate</button>
-        </form>
-        <hr>
-        <h3>Result:</h3>
-        
-        <div class="form-group">
-        <input type="text" class="form-control" id="result">
         </div>
-        
-        <div id="chatWarning" class="alert alert-warning" style="display:none">
-            This code is too long for chat! Use a command block instead.
-        </div>
-        
         <script type="text/javascript">
             updateCode();
         </script>
