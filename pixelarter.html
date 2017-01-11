@@ -122,8 +122,8 @@
                 {
                     var builders = [];
                     //Add a deleter for the builders
-                    builders.push({id: 'FallingSand', Time: 99, TileID: 152});
-                    builders.push({id: 'FallingSand', Time: 99, TileID: 137, TileEntityData: {Command: "/fill ~ ~1 ~ ~ ~-" + 2 * slice.length + " ~ air"}});
+                    builders.push({id: 'falling_block', Time: 99, TileID: 152});
+                    builders.push({id: 'falling_block', Time: 99, TileID: 137, TileEntityData: {Command: "/fill ~ ~1 ~ ~ ~-" + 2 * slice.length + " ~ air"}});
 
                     for (var x = 0; x < slice.length; x++)
                         builders = builders.concat(generateBuilder(slice[x], i * sliceWidth + x + 1));
@@ -135,7 +135,7 @@
                 output.className = "form-control";
                 output.value = result;
 
-                if (result.length > 32767) tooLongdiv.style.display = "block";
+                if (result.length > 32500) tooLongdiv.style.display = "block";
 
                 resultDiv.appendChild(output);
             }
@@ -144,8 +144,8 @@
         function generateBuilder(column, offset)
         {
             var result = [];
-            result.push({id: 'FallingSand', Time: 99, TileID: 152});
-            result.push({id: 'FallingSand', Time: 99, TileID: 137, TileEntityData: {Command: generateCode(column, offset)}});
+            result.push({id: 'falling_block', Time: 99, TileID: 152});
+            result.push({id: 'falling_block', Time: 99, TileID: 137, TileEntityData: {Command: generateCode(column, offset)}});
             return result;
         }
 
@@ -165,7 +165,7 @@
                     context.fillRect( x, y, 1, 1 );
 
                     var Ids = block[1];
-                    var blockEntity = {id: 'FallingSand', TileID: Ids[0], Time: 99};
+                    var blockEntity = {id: 'falling_block', TileID: Ids[0], Time: 99};
                     if (Ids[1]) blockEntity["Data"] = Ids[1];
 
                     result[x].push(blockEntity);
@@ -253,7 +253,7 @@
             }
         }
 
-        function generateCode(list)
+        function generateCode(list, shift)
         {
             list.reverse();
             var root = list[0];
@@ -268,7 +268,7 @@
             var id = root["id"];
             delete root["id"];
 
-            return "/summon " + id + " ~ ~1 ~ " + toMcJson(root);
+            return "/summon " + id + " ~" + shift + " ~1" + " ~ " + toMcJson(root);
         }
 
         function toMcJson(item)

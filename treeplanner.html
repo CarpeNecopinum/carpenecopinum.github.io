@@ -23,6 +23,9 @@
                     case "2":
                         source.value = "" + Math.round(form.height.value / 2) + "x\n" + " Sheep {Color:0}\n Sheep {Color:14}";
                         break;
+                    case "3":
+                        source.value = "Minecart\n3x\n Creeper\nGiant";
+                        break;
                 }
                 if (form.add_minecart.checked) source.value += "\nMinecart";
             }
@@ -123,6 +126,7 @@
                         <select onchange="updateCode()" class="form-control" name="type">
                             <option value="1" selected>Spider Tree</option>
                             <option value="2">Sheep Candy Cane</option>
+                            <option value="3">Rideable Giant</option>
                         </select>
                     </div>
 
