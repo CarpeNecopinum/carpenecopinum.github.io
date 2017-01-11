@@ -3,11 +3,11 @@
 <html>
     <head>
         <title>Minecraft Mobtree Summoner</title>
-        
+
         <link rel="stylesheet" href="base.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-        
+
 
         <script type="text/javascript">
             function updateCode()
@@ -29,12 +29,13 @@
 
             function generateCode(list)
             {
+                list.reverse();
                 var root = list[0];
                 var current = root;
 
                 for (var i = 1; i < list.length; i++)
                 {
-                    current["Riding"] = list[i];
+                    current["Passengers"] = [list[i]];
                     current = list[i];
                 }
 
@@ -88,9 +89,9 @@
                         errorblock.innerText = e.message;
                         errorblock.style.display = "block";
                     }
-                    
+
                     var code = generateCode(list);
-               
+
                     document.getElementById("result").value = code;
                     document.getElementById("chatWarning").style.display = (code.length > 100) ? "block" : "none";
                 } finally {
@@ -99,16 +100,16 @@
             }
         </script>
         <script type="text/javascript" src="grammar.js"></script>
-    
+
     </head>
     <body>
         <div class="container">
             <div class="col-md-2" id="sidebar">
                 <h5>Also:</h5>
                 <a href="treeplanner.html">Mob Tree Spawner</a>
-                <a href="pixelarter.html">Pixel Art Summoner</a>                
+                <a href="pixelarter.html">Pixel Art Summoner</a>
             </div>
-            
+
             <div class="col-md-8">
                 <h1>Mob Tree Summoner</h1>
                 <form role="form" onsubmit="return generate()" id="tree">

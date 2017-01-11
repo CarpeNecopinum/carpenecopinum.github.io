@@ -4,20 +4,20 @@
         <title>Minecraft PixelArt Summoner</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        
+
         <link rel="stylesheet" href="base.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-        
+
     </head>
     <body>
         <div class="container">
             <div class="col-md-2" id="sidebar">
                 <h5>Also:</h5>
                 <a href="treeplanner.html">Mob Tree Spawner</a>
-                <a href="pixelarter.html">Pixel Art Summoner</a>                
+                <a href="pixelarter.html">Pixel Art Summoner</a>
             </div>
-            
+
             <div class="col-md-8">
                 <h1>Minecraft PixelArt Summoner</h1>
                 <form id="input" onsubmit="return false">
@@ -36,13 +36,13 @@
                             <option value="yuv" selected="selected">Luma Weighted</option>
                         </select>
                     </div>
-                </form>   
-                
+                </form>
+
                 <div class="col-md-6">
-                    <img id="preview" src="" alt="">                    
+                    <img id="preview" src="" alt="">
                 </div>
                 <div class="col-md-6">
-                    <canvas id="result"></canvas>                    
+                    <canvas id="result"></canvas>
                 </div>
                 <div class="clearfix"></div>
 
@@ -58,7 +58,7 @@
     </body>
     <script type="text/javascript">
         $ = document.getElementById.bind(document);
-        
+
         var preview = $("preview");
         var sliceField = document.forms["input"].slicing;
         var resultDiv = $("results");
@@ -66,34 +66,34 @@
         var canvas = $("result");
         var context = canvas.getContext('2d');
         var strategy = "hsv";
-                
+
         function update()
         {
             var file = document.forms["input"].image.files[0];
             strategy = document.forms["input"].strategy.value;
-            
+
             var reader = new FileReader();
             reader.onload = function(e)
             {
                 preview.src = this.result;
-                
+
                 canvas.width = preview.width;
                 canvas.height = preview.height;
-                context.drawImage(preview, 0, 0, preview.width, preview.height);  
-                
+                context.drawImage(preview, 0, 0, preview.width, preview.height);
+
                 generate(context, preview.width, preview.height);
             };
             reader.readAsDataURL(file);
-            
+
         };
-        
+
         function generate(context, width, height)
-        { 
+        {
             tooLongdiv.style.display = "none";
-            
+
             var list = generateStacks(context, width, height);
             console.debug(list);
-            
+
             var slices = [];
             var sliceWidth = parseInt(sliceField.value);
             if (sliceWidth != 0)
@@ -105,42 +105,42 @@
             } else {
                 slices.push(list);
             }
-            
+
             resultDiv.innerHTML = "";
-            
+
             console.debug(slices);
             for (var i = 0; i < slices.length; i++)
             {
                 var result;
-                
+
                 var slice = slices[i];
                 if (slice.length == 1)
                 {
                     result = generateCode(slice, i+1);
-                } 
+                }
                 else
                 {
                     var builders = [];
                     //Add a deleter for the builders
                     builders.push({id: 'FallingSand', Time: 99, TileID: 152});
                     builders.push({id: 'FallingSand', Time: 99, TileID: 137, TileEntityData: {Command: "/fill ~ ~1 ~ ~ ~-" + 2 * slice.length + " ~ air"}});
-            
+
                     for (var x = 0; x < slice.length; x++)
-                        builders = builders.concat(generateBuilder(slice[x], i * sliceWidth + x + 1));                    
-                    
+                        builders = builders.concat(generateBuilder(slice[x], i * sliceWidth + x + 1));
+
                     result = generateCode(builders, 1);
                 }
 
                 var output = document.createElement("textarea");
                 output.className = "form-control";
                 output.value = result;
-                
+
                 if (result.length > 32767) tooLongdiv.style.display = "block";
-                
+
                 resultDiv.appendChild(output);
             }
         }
-        
+
         function generateBuilder(column, offset)
         {
             var result = [];
@@ -148,7 +148,7 @@
             result.push({id: 'FallingSand', Time: 99, TileID: 137, TileEntityData: {Command: generateCode(column, offset)}});
             return result;
         }
-        
+
         function generateStacks(context, width, height)
         {
             var result = [];
@@ -158,25 +158,25 @@
                 for (var y = 0; y < height; y++)
                 {
                     var block = findBlock(context.getImageData(x,y,1,1).data);
-                    
+
                     var rgb = block[0];
-                    
+
                     context.fillStyle = "rgb("+rgb[0]+","+rgb[1]+","+rgb[2]+")";
                     context.fillRect( x, y, 1, 1 );
-                    
-                    var Ids = block[1];                    
+
+                    var Ids = block[1];
                     var blockEntity = {id: 'FallingSand', TileID: Ids[0], Time: 99};
-                    if (Ids[1]) blockEntity["Data"] = Ids[1];  
-                    
+                    if (Ids[1]) blockEntity["Data"] = Ids[1];
+
                     result[x].push(blockEntity);
                 }
             }
             return result;
         }
-        
+
         var blockPalette = [
-            // color in RGB -> TileID, Data    
-            
+            // color in RGB -> TileID, Data
+
             // Wools
             [[215,213,210], [35, 0]],
             [[176,105, 52], [35, 1]],
@@ -194,11 +194,11 @@
             [[ 75, 82, 39], [35,13]],
             [[175, 51, 37], [35,14]],
             [[ 43, 44, 45], [35,15]],
-            
-            
+
+
             [[ 15, 18, 22], [173,0]], // Coal Block
             [[137, 86, 61], [ 82,0]], // Clay
-            
+
             // Hardened Clays
             [[208,189,178], [159,0]],
             [[167,95,61], [159,1]],
@@ -216,14 +216,14 @@
             [[91,72,42],  [159,13]],
             [[163,64,52],  [159,14]],
             [[64,48,41], [159,15]]
-            
+
         ];
-        
+
         function findBlock(rgb)
         {
             var difference = percievedDiff(rgb, blockPalette[0][0]);
             var chosen = blockPalette[0];
-            
+
             for (var i = 1; i < blockPalette.length; i++)
             {
                 var diff = percievedDiff(rgb, blockPalette[i][0]);
@@ -233,10 +233,10 @@
                     chosen = blockPalette[i];
                 }
             }
-            
+
             return chosen;
         }
-        
+
         function percievedDiff(colorA, colorB)
         {
             switch(strategy)
@@ -246,28 +246,29 @@
                     hsB = rgb2hsv(colorB);
 
                     return Math.abs(hsA.h - hsB.h) * hsA.s + Math.abs(hsA.s - hsB.s) + Math.abs(hsA.v - hsB.v);
-                
+
                 case "yuv":
                     return 0.299 * Math.abs(colorA[0] - colorB[0]) + 0.587 * Math.abs(colorA[1] - colorB[1]) + 0.144 * Math.abs(colorA[2] - colorB[2]);
-                    
+
             }
         }
-        
-        function generateCode(list, shift)
+
+        function generateCode(list)
         {
+            list.reverse();
             var root = list[0];
             var current = root;
 
             for (var i = 1; i < list.length; i++)
             {
-                current["Riding"] = list[i];
+                current["Passengers"] = [list[i]];
                 current = list[i];
             }
 
             var id = root["id"];
             delete root["id"];
 
-            return "/summon " + id + " ~" + shift + " ~1" + " ~ " + toMcJson(root);
+            return "/summon " + id + " ~ ~1 ~ " + toMcJson(root);
         }
 
         function toMcJson(item)
@@ -297,7 +298,7 @@
 
             return "" + item;
         }
-        
+
         function rgb2hsv (rgb) {
             var rr, gg, bb,
                 r = rgb[0] / 255,
@@ -337,8 +338,8 @@
                 v: Math.round(v * 100)
             };
         }
-        
-        document.forms["input"].image.onchange = update; 
+
+        document.forms["input"].image.onchange = update;
         document.forms["input"].slicing.onchange = update;
     </script>
 </html>
