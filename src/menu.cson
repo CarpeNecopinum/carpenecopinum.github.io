@@ -1,0 +1,5 @@
+top:
+    "Minecraft Hackery":
+        "Tree Planner":
+            infile: "treeplanner.html"
+            outfile: "mchackery-treeplanner.html"
