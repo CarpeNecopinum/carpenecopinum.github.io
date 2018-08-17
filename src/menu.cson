@@ -1,5 +1,13 @@
-top:
-    "Minecraft Hackery":
-        "Tree Planner":
+[
+    title: "top"
+    pages: [
+        title: "Home"
+        infile: "index.html"
+        ,
+        title: "Minecraft Hackery"
+        pages: [
+            title: "Tree Planner"
             infile: "treeplanner.html"
-            outfile: "mchackery-treeplanner.html"
+        ]
+    ]
+]

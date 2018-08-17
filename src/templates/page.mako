@@ -5,8 +5,7 @@
     </head>
     <body>
         <nav id="top">
-            
-
+            ${navs["top"]}
         </nav>
 
     </body>
