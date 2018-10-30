@@ -23,7 +23,9 @@ body {
 }
 
 #setup input, #setup button {
-    font-size: 5vmin;
+    font-size: 20vmin;
+    width: 80vw;
+    text-align: center;
 }
 
 #setup button {
