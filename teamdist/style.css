@@ -1,0 +1,35 @@
+body {
+    font-size: 5vmin;
+    margin: 0;
+
+    height: 100vh;
+    width: 100vw;
+}
+
+.team-0 {
+    background-color: blue;
+}
+
+.team-1 {
+    background-color: green;
+}
+
+#setup {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#setup input, #setup button {
+    font-size: 5vmin;
+}
+
+#setup button {
+    padding: 2vmin 10vmin;
+}
+
+.hidden {
+    display: none !important;
+}
