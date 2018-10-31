@@ -14,15 +14,21 @@ body {
     background-color: green;
 }
 
-#setup {
+#setup, #next {
     display: flex;
     flex-direction: column;
     height: 100vh;
     justify-content: space-around;
     align-items: center;
+    box-sizing: border-box;
 }
 
-#setup input, #setup button {
+#next {
+    justify-content: flex-end;
+    padding-bottom: 2vh;
+}
+
+#setup input, #setup button, #next button {
     font-size: 20vmin;
     width: 80vw;
     text-align: center;

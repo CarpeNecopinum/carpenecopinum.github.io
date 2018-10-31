@@ -1,8 +1,10 @@
 const setupdiv = document.getElementById("setup")
+const nextdiv = document.getElementById("next")
+const nextbutton = document.querySelector("#next button")
 const number_input = document.getElementById("input_number")
 
 let queue = [];
-let showing_color = true;
+let showing_color = false;
 
 Array.prototype.shuffle = function() {
     var input = this;
@@ -25,15 +27,16 @@ function start() {
     console.debug(queue);
 
     if (n > 0) {
-        //nextdiv.classList.remove("hidden");
+        nextdiv.classList.remove("hidden");
         setupdiv.classList.add("hidden");
     }
 }
 
-document.body.addEventListener("click", () => {
+nextbutton.addEventListener("click", () => {
     if (!queue.length) {
         document.body.className = "";
-        return setupdiv.classList.remove("hidden");
+        return setupdiv.classList.remove("hidden"),
+               nextdiv.classList.add("hidden");
     }
 
     showing_color = !showing_color;
