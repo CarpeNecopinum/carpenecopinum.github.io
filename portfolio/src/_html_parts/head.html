@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {{if hasmath}} {{insert head_katex.html }}     {{end}}
+  {{if hascode}} {{insert head_highlight.html }}   {{end}}
+  <link rel="stylesheet" href="/css/judoc.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <!--<link rel="stylesheet" href="/css/poole_lanyon.css">-->
+  <link rel="stylesheet" href="/css/adjust.css">
+  <link rel="icon" href="/assets/infra/favicon.png">
+  {{isdef title}} <title>{{fill title}}</title>  {{end}}
+</head>
+<body>
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Wrap is the content to shift when toggling the sidebar. We wrap the
+content to avoid any CSS collisions with our real content. -->
+<div class="wrap">
+  <div class="masthead">
+    <div class="container">
+      <h3 class="masthead-title">
+        <a href="/" title="Home">CarpeNecopinum</a>
+        <small>Computer Graphics, Web and Machine Learning</small>
+        <small>in Julia, C++, JavaScript, Python, PHP, Kotlin and C#</small>
+      </h3>
+    </div>
+  </div>
+
+  <div class="container content">
+<!-- Content appended here -->

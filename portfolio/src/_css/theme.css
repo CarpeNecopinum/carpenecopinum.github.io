@@ -1,0 +1,147 @@
+body {
+    background-color: black;
+    color: white;
+}
+
+.container {
+    max-width: 52em;
+    margin: 0 auto;
+}
+
+.container img {
+    max-width: 100%;
+}
+
+.sidebar {
+    display: none;
+    position: fixed;
+    opacity: 0;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 14em;
+    font-family: "PT Sans", Helvetica, Arial, sans-serif;
+    color: rgba(255,255,255,.6);
+    background-color: #202020;
+    padding-top: 4em;
+    transition: opacity 3s;
+}
+
+#sidebar-checkbox:checked ~ .sidebar {
+    display: block;
+    opacity: 100%;
+}
+
+
+#sidebar-checkbox {
+    display: none;
+}
+
+#sidebar-checkbox:checked ~ .wrap {
+    opacity: 0.5;
+    /* left: 14em; */
+    -webkit-filter: blur(8px) saturate(10%);
+}
+
+.sidebar-nav-item {
+    display: block;
+    padding: 1em;
+    text-decoration: none;
+    font-weight: normal;
+    color: #fff;
+}
+
+.sidebar-nav-item.active,
+a.sidebar-nav-item:hover,
+a.sidebar-nav-item:focus {
+    background-color: #303030;
+    border-bottom: 3px solid orange;
+}
+
+.sidebar-item {
+    padding-left: 1em;
+}
+
+.sidebar-toggle {
+    position: fixed;
+    top:  1rem;
+    left: 1rem;
+    display: block;
+    width: 1rem;
+    height: 1rem;
+    padding: .5rem .65rem;
+    color: #505050;
+    background-color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.sidebar-toggle:active,
+#sidebar-checkbox:checked ~ .sidebar-toggle {
+  color: #fff;
+  background-color: orange;
+}
+
+.wrap {
+    background-color: #404040;
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    transition: all 0.3s;
+    min-height: 100vh;
+}
+
+.masthead {
+    padding: 0.1em;
+    box-shadow: 0em 0em 1em black;
+    border-bottom: 3px solid orange;
+}
+
+.masthead a {
+    text-decoration: none;
+    color: white;
+}
+
+.masthead small {
+    font-size: 0.5em;
+    display: block;
+}
+
+.jd-content h1 {
+    padding-bottom: 0.25em;
+    border-bottom: 3px solid gray;
+    margin-top: 1.5em;
+    margin-bottom: 1em;
+}
+
+figure {
+    text-align: center;
+}
+
+figure.float {
+    float: left;
+}
+
+figure.float img {
+    max-height: 20em;
+    width: auto;
+    padding: 0;
+}
+
+figure.half {
+    display: inline-block;
+    width: 45%;
+    margin: 2%;
+}
+
+figure img {
+    width: 100%;
+}
+
+figure figcaption {
+    color: #ccc;
+    font-size: 0.75em;
+    border: 0.5px solid rgba(255,255,255,0.1);
+    magin-top: 0px;
+}

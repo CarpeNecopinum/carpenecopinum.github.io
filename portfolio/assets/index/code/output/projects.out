@@ -1,0 +1,14 @@
+@@projects
+~~~
+<a href="pub/fluxus-surveys.html" class="project">
+    <h2>Fluxus 2.0 - Surveys</h2>
+    <img alt="Fluxus 2.0 - Surveys" src="assets/teasers/umfrage.jpg" />
+</a>
+~~~
+~~~
+<a href="pub/freundlichification.html" class="project">
+    <h2>Freundlichificator</h2>
+    <img alt="Freundlichificator" src="assets/pages/freundlich/optimized_patches_unshifted.jpg" />
+</a>
+~~~
+@@

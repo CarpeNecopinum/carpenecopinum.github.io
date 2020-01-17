@@ -1,0 +1,25 @@
+<!-- CONTENT ENDS HERE -->
+      </div>  <!-- div: content container -->
+    </div> <!-- wrap -->
+    {{ if hasmath }}
+        {{ insert foot_katex.html }}
+    {{ end }}
+    {{ if hascode }}
+        {{ insert foot_highlight.html }}
+    {{ end }}
+
+    <!-- Toggleable sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-item">
+      </div>
+      <nav class="sidebar-nav">
+        <a class="sidebar-nav-item {{ispage index.html}}active{{end}}" href="/">Project Showcase</a>
+      </nav>
+      <div class="sidebar-item">
+        <p>&copy; {{fill author}}.</p>
+      </div>
+    </div>
+
+    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
+  </body>
+</html>

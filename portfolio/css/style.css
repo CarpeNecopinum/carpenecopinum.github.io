@@ -1,0 +1,46 @@
+.projects {
+    text-align: center;
+}
+
+.project {
+    position: relative;
+    display: inline-block;
+
+    width: 22em;
+    height: 12em;
+    margin: 1em;
+    padding: 0px;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.project:hover {
+    transform: scale(1.05);
+    box-shadow: 0.5em 0.5em 1em #0003;
+}
+
+.project img {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    padding: 0;
+}
+
+.project h2 {
+    color: white;
+    margin: 0;
+    top: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    border: none;
+    opacity: 0.05;
+    transition: all 0.3s;
+    background: linear-gradient(#000a, #000a, #0000);
+    padding: 1em;
+    text-align: center;
+}
+
+.project:hover h2 {
+    opacity: 1;
+}

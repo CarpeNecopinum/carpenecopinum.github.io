@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <!-- Un-minified script so that can play a bit -->
+<link rel="stylesheet" href="/libs/katex/katex.min.css">
+     
+  
+  <link rel="stylesheet" href="/css/judoc.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <!--<link rel="stylesheet" href="/css/poole_lanyon.css">-->
+  <link rel="stylesheet" href="/css/adjust.css">
+  <link rel="icon" href="/assets/infra/favicon.png">
+   <title>Freundlichificator</title>  
+</head>
+<body>
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Wrap is the content to shift when toggling the sidebar. We wrap the
+content to avoid any CSS collisions with our real content. -->
+<div class="wrap">
+  <div class="masthead">
+    <div class="container">
+      <h3 class="masthead-title">
+        <a href="/" title="Home">CarpeNecopinum</a>
+        <small>Computer Graphics, Web and Machine Learning</small>
+        <small>in Julia, C++, JavaScript, Python, PHP, Kotlin and C#</small>
+      </h3>
+    </div>
+  </div>
+
+  <div class="container content">
+<!-- Content appended here -->
+
+<div class="jd-content">
+<h1 id="freundlichificator"><a href="/pub/freundlichification.html#freundlichificator">Freundlichificator</a></h1>
+
+    <figure class="float" style="float: left">
+        <img src=" ../assets/pages/freundlich/original.jpg" alt=" Otto Freundlich, Komposition September 1938"/>
+        <figcaption>
+             Otto Freundlich, Komposition September 1938
+        </figcaption>
+    </figure>
+    
+<p>This project was inspired by the art of Otto Freundlich. As seen on the left, some of his pieces appear like they were assembled from many similarly shaped primitives &#40;namely rectangles with one rounded-off corner&#41; of varying size and color.</p>
+<p>While most of Freundlich&#39;s original work is relatively abstract, we found it an interesting challenge to try and assemble our own Freundlich-style images based on non-abstract inputs, such as photographs.</p>
+
+    <div style="clear:both"></div>
+    
+<p>As first step of the &quot;Freundlichification&quot; process, we shift the colors in the input image, such that they match a predefined target color palette, which already helps to tone down the realism in our image.</p>
+<div class="top">
+    <figure class="half">
+        <img src=" ../assets/pages/freundlich/dom.jpg" alt=" Aachen Cathedral; Photo by CEphoto, Uwe Aranas"/>
+        <figcaption>
+             Aachen Cathedral; Photo by CEphoto, Uwe Aranas
+        </figcaption>
+    </figure>
+     
+    <figure class="half">
+        <img src=" ../assets/pages/freundlich/shifted.jpg" alt=" Shifted Input Image"/>
+        <figcaption>
+             Shifted Input Image
+        </figcaption>
+    </figure>
+    </div>
+<p>Next we start turning the image into Freundlich primitives. For this, we start with a completely black canvas and randomly generate a large number of these little snippets, we then take the one snippet that, when filled in with a single color and overlayed on our current canvas, gets us the closest to our target image.</p>
+<p>This process alone, however, will leave us with a few unpleasant black &quot;cracks&quot; where no snippets have been generated. To reduce this effect, we optimize the arrangement of our snippets by going through all of them and trying out if moving each of these by a few pixels results in less uncovered canvas area.</p>
+<div class="top">
+    <figure class="half">
+        <img src=" ../assets/pages/freundlich/greedy_patches.jpg" alt=" Greedily created snippets"/>
+        <figcaption>
+             Greedily created snippets
+        </figcaption>
+    </figure>
+     
+    <figure class="half">
+        <img src=" ../assets/pages/freundlich/optimized_patches.jpg" alt=" Optimized snippets"/>
+        <figcaption>
+             Optimized snippets
+        </figcaption>
+    </figure>
+    </div>
+<div class="page-foot">
+  <div class="copyright">
+    &copy; Carpe Necopinum. Website built with <a href="https://github.com/tlienart/JuDoc.jl">JuDoc.jl</a>.
+  </div>
+</div>
+
+</div>
+<!-- CONTENT ENDS HERE -->
+      </div>  <!-- div: content container -->
+    </div> <!-- wrap -->
+    
+        <script src="/libs/katex/katex.min.js"></script>
+<script src="/libs/katex/auto-render.min.js"></script>
+<script>renderMathInElement(document.body)</script>
+
+    
+    
+
+    <!-- Toggleable sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-item">
+      </div>
+      <nav class="sidebar-nav">
+        <a class="sidebar-nav-item " href="/">Project Showcase</a>
+      </nav>
+      <div class="sidebar-item">
+        <p>&copy; Carpe Necopinum.</p>
+      </div>
+    </div>
+
+    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
+  </body>
+</html>
