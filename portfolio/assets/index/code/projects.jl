@@ -6,7 +6,10 @@ projs = [
         page="pub/fluxus-surveys.html"),
     (name = "Freundlichificator",
         image = "assets/pages/freundlich/optimized_patches_unshifted.jpg",
-        page="pub/freundlichification.html")]
+        page="pub/freundlichification.html"),
+    (name = "Projection Mapping",
+        image = "assets/teasers/lufo-proj.jpg",
+        page="pub/lufo-projection-mapping.html")]
 
 println("@@projects")
 for proj in projs

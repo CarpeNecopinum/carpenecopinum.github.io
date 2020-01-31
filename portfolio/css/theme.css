@@ -145,3 +145,9 @@ figure figcaption {
     border: 0.5px solid rgba(255,255,255,0.1);
     magin-top: 0px;
 }
+
+.franklin-content h2 {
+    border: none;
+    font-weight: 200;
+    margin: 0.25em 0em 0em;
+}

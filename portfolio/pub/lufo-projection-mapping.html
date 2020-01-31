@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+   <!-- Un-minified script so that can play a bit -->
+<link rel="stylesheet" href="/libs/katex/katex.min.css">
+     
+  
+  <link rel="stylesheet" href="/css/judoc.css">
+  <link rel="stylesheet" href="/css/theme.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <!--<link rel="stylesheet" href="/css/poole_lanyon.css">-->
+  <link rel="stylesheet" href="/css/adjust.css">
+  <link rel="icon" href="/assets/infra/favicon.png">
+   <title>Projection Mapping on Complex Surfaces</title>  
+</head>
+<body>
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Wrap is the content to shift when toggling the sidebar. We wrap the
+content to avoid any CSS collisions with our real content. -->
+<div class="wrap">
+  <div class="masthead">
+    <div class="container">
+      <h3 class="masthead-title">
+        <a href="/" title="Home">CarpeNecopinum</a>
+        <small>Computer Graphics, Web and Machine Learning</small>
+        <small>in Julia, C++, JavaScript, Python, PHP, Kotlin and C#</small>
+      </h3>
+    </div>
+  </div>
+
+  <div class="container content">
+<!-- Content appended here -->
+
+<div class="franklin-content">
+<h1 id="projection_mapping_on_complex_surfaces"><a href="/pub/lufo-projection-mapping.html#projection_mapping_on_complex_surfaces">Projection Mapping on Complex Surfaces</a></h1>
+
+    <figure class="float" style="float: left">
+        <img src=" ../assets/pages/proj-mapping/setup.jpg" alt=" Projection Setup"/>
+        <figcaption>
+             Projection Setup
+        </figcaption>
+    </figure>
+    
+<p>For the &quot;Geometry Lab&quot; exhibition in the Ludwig Forum in Aachen, one of the pieces we presented was a 3D projection mapping onto a plaster statue. This projection was then used to visualize parts of a geometry processing pipeline &#40;3D scanning, mesh construction, quad meshing, texturing&#41; directly on the statue &#40;which itself went through this pipeline in order to make the visualization work&#41;. Our setup uses 6 beamers to deliver a presentation that can be viewed from any direction.</p>
+<p>For this to work, a lot of pieces have to function together:</p>
+
+    <div style="clear:both"></div>
+    
+<h2 id="piece_1_intrinsic_beamer_calibration"><a href="/pub/lufo-projection-mapping.html#piece_1_intrinsic_beamer_calibration">Piece 1: Intrinsic Beamer Calibration</a></h2>
+
+    <figure class="float" style="float: right">
+        <img src=" ../assets/pages/proj-mapping/calibration.jpg" alt=" Beamer Calibration"/>
+        <figcaption>
+             Beamer Calibration
+        </figcaption>
+    </figure>
+    
+<p>In order to know which pixel in the beamer image we have to &quot;turn on&quot; in order to light up a specific part of the statue, the beamers need to be calibrated with respect to said statue. The first step of this is the intrinsic calibration.</p>
+<p>This step determines the inherent properties of the beamer, which is mostly influenced by the properties and arrangement of its lens&#40;es&#41;.</p>
+<p>The intrinsic calibration of a beamer is very similar to the intrinsic calibration of a camera &#40;in fact, the final application simulates each beamer as a virtual camera&#41;: We use a test pattern of known dimensions &#40;usually a checkerboard-like one&#41; and over multiple images find the position of each pixel on this board. For calibrating a camera, this is easy as we can just use the camera to capture an image, find the calibration pattern and use that to locate where pixels show up in 3D space.</p>
+<p>With a beamer, this is trickier, as we can&#39;t make a photo through the eyes of the projector. So instead, we project a number of different patterns, the combination of which uniquely defines each pixel of the projected image. We then use a regular camera to observe these patterns as well as the calibration board and thus again we get the correspondence between image pixels and board position which we can use to compute the intrinsic calibration of the beamer.</p>
+
+    <div style="clear:both"></div>
+    
+<div class="page-foot">
+  <div class="copyright">
+    &copy; Carpe Necopinum. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a>.
+  </div>
+</div>
+
+</div>
+<!-- CONTENT ENDS HERE -->
+      </div>  <!-- div: content container -->
+    </div> <!-- wrap -->
+    
+        <script src="/libs/katex/katex.min.js"></script>
+<script src="/libs/katex/auto-render.min.js"></script>
+<script>renderMathInElement(document.body)</script>
+
+    
+    
+
+    <!-- Toggleable sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-item">
+      </div>
+      <nav class="sidebar-nav">
+        <a class="sidebar-nav-item " href="/">Project Showcase</a>
+      </nav>
+      <div class="sidebar-item">
+        <p>&copy; Carpe Necopinum.</p>
+      </div>
+    </div>
+
+    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
+  </body>
+</html>
